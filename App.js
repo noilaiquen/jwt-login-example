@@ -4,10 +4,13 @@ import {
     StyleSheet,
     Text,
     View,
-    Button,
     ActivityIndicator,
-    Keyboard
+    Keyboard,
+    TouchableOpacity,
+    ImageBackground,
+    StatusBar
 } from 'react-native';
+const image_bg = require('./assets/img/bg.jpg');
 
 export default class App extends Component {
     state = {
@@ -28,7 +31,7 @@ export default class App extends Component {
         });
         const { username, password } = this.state;
         try {
-            const response = await fetch('http://10.86.32.140/bcms/api/login', {
+            const response = await fetch('http://10.1.0.11/bcms/api/login', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -79,12 +82,18 @@ export default class App extends Component {
 
     render() {
         return (
-            <View style={styles.container}>
+            <ImageBackground
+                source={image_bg}
+                blurRadius={5}
+                style={styles.container}
+            >
+                <StatusBar barStyle="light-content" />
                 <Text style={styles.welcome}>JWT</Text>
                 <Text style={styles.error}>{this.state.error}</Text>
                 {!this.state.isLoggedIn ? (
                     <View style={styles.form}>
                         <TextInput
+                            autoCapitalize="none"
                             style={styles.input}
                             value={this.state.username}
                             placeholder="Username"
@@ -103,11 +112,12 @@ export default class App extends Component {
                             ref={(input) => this.passwordInput = input}  
                         />
                         {!this.state.isLoading ? (
-                            <Button
+                            <TouchableOpacity
                                 style={styles.button}
-                                title="Sign in"
                                 onPress={this.onSignIn.bind(this)}
-                            />
+                            >
+                                <Text style={{ color: '#FFF' }}>Sign In</Text>
+                            </TouchableOpacity>
                             ) : (
                                 <ActivityIndicator
                                     size="small"
@@ -127,7 +137,7 @@ export default class App extends Component {
                             />
                     </View>
                 )}
-            </View>
+            </ImageBackground>
         );
     }
 }
@@ -136,8 +146,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#FFF',
+        alignItems: 'center'
+        
     },
     containerLoggedin: {
         alignItems: 'center',
@@ -146,12 +156,12 @@ const styles = StyleSheet.create({
     welcome: {
         fontSize: 20,
         textAlign: 'center',
-        color: 'green',
+        color: '#D32F2F',
         margin: 10,
     },
     error: {
         fontSize: 14,
-        color: 'red'
+        color: '#D32F2F'
     },
     textLogin: {
         fontSize: 20,
@@ -160,9 +170,20 @@ const styles = StyleSheet.create({
     input: {
         width: 300,
         height: 50,
-        fontSize: 16
+        fontSize: 16,
+        padding: 5,
+        marginTop: 10,
+        borderColor: '#D32F2F',
+        borderWidth: 1,
+        borderRadius: 5,
+        backgroundColor: '#CFD8DC'
     },
     button: {
-        height: 50
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#D32F2F',
+        borderRadius: 5,
+        marginTop: 10
     }
 });
