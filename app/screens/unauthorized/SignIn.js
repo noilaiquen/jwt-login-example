@@ -11,19 +11,16 @@ import {
    StatusBar,
    Button
 } from 'react-native';
-const image_bg = require('./assets/img/bg.jpg');
+const image_bg = require('../../../assets/img/bg.jpg')
 
-const IP = '192.168.31.88';
+const IP = '10.86.32.65';
 
-export default class App extends Component {
+export default class SignIn extends Component {
    state = {
       username: '',
       password: '',
       error: '',
-      token: '',
       isLoading: false,
-      isLoggedIn: false,
-      userInfo: null
    }
 
    onSignIn = async () => {
@@ -49,14 +46,7 @@ export default class App extends Component {
 
          if (responseJson.status === 1) {
             const { token, payload } = responseJson;
-            this.setState({
-               username: '',
-               password: '',
-               isLoading: false,
-               isLoggedIn: true,
-               token,
-               userInfo: payload
-            });
+            this.props.navigation.navigate('Authorized', { token, user: payload })
          } else {
             this.setState({
                isLoading: false,
@@ -93,54 +83,44 @@ export default class App extends Component {
             <StatusBar barStyle="light-content" />
             <Text style={styles.welcome}>JWT</Text>
             <Text style={styles.error}>{this.state.error}</Text>
-            {!this.state.isLoggedIn ? (
-               <View style={styles.form}>
-                  <TextInput
-                     autoCapitalize="none"
-                     style={styles.input}
-                     value={this.state.username}
-                     placeholder="Username"
-                     returnKeyType="next"
-                     onSubmitEditing={() => this.passwordInput.focus()}
-                     onChangeText={text => this.setState({ username: text })}
-                  />
-                  <TextInput
-                     style={styles.input}
-                     value={this.state.password}
-                     secureTextEntry
-                     returnKeyType="go"
-                     placeholder="Password"
-                     onChangeText={text => this.setState({ password: text })}
-                     onSubmitEditing={this.onSignIn.bind(this)}
-                     ref={(input) => this.passwordInput = input}
-                  />
+            <View style={styles.form}>
+               <TextInput
+                  autoCapitalize="none"
+                  style={styles.input}
+                  value={this.state.username}
+                  placeholder="Username"
+                  returnKeyType="next"
+                  underlineColorAndroid="rgba(0,0,0,0)"
+                  onSubmitEditing={() => this.passwordInput.focus()}
+                  onChangeText={text => this.setState({ username: text })}
+               />
+               <TextInput
+                  style={styles.input}
+                  value={this.state.password}
+                  secureTextEntry
+                  returnKeyType="go"
+                  placeholder="Password"
+                  underlineColorAndroid="rgba(0,0,0,0)"
+                  onChangeText={text => this.setState({ password: text })}
+                  onSubmitEditing={this.onSignIn.bind(this)}
+                  ref={(input) => this.passwordInput = input}
+               />
 
-                  <TouchableOpacity
-                     style={styles.button}
-                     onPress={this.onSignIn.bind(this)}
-                  >
-                     {!this.state.isLoading ? (
-                        <Text style={styles.textSignIn}>Sign In</Text>
-                     ) : (
-                           <ActivityIndicator
-                              size="small"
-                              color="#FFF"
-                           />
-                        )
-                     }
-                  </TouchableOpacity>
-               </View>
-            ) : (
-                  <View style={styles.containerLoggedin}>
-                     <Text style={styles.textLogin}>You are logged in!</Text>
-                     <Text>{this.state.token}</Text>
-                     <Button
-                        style={styles.button}
-                        title="Sign out"
-                        onPress={this.onSignOut.bind(this)}
-                     />
-                  </View>
-               )}
+               <TouchableOpacity
+                  style={styles.button}
+                  onPress={this.onSignIn.bind(this)}
+               >
+                  {!this.state.isLoading ? (
+                     <Text style={styles.textSignIn}>Sign In</Text>
+                  ) : (
+                        <ActivityIndicator
+                           size="small"
+                           color="#FFF"
+                        />
+                     )
+                  }
+               </TouchableOpacity>
+            </View>
          </ImageBackground>
       );
    }
@@ -164,7 +144,7 @@ const styles = StyleSheet.create({
       margin: 10,
    },
    error: {
-      fontSize: 14,
+      fontSize: 16,
       color: '#D32F2F'
    },
    textLogin: {
@@ -177,6 +157,7 @@ const styles = StyleSheet.create({
       fontSize: 16,
       padding: 5,
       marginTop: 10,
+      fontSize: 16,
       borderColor: '#D32F2F',
       borderWidth: 1,
       borderRadius: 5,
@@ -192,6 +173,7 @@ const styles = StyleSheet.create({
       marginTop: 10
    },
    textSignIn: {
-      color: '#FFF'
+      color: '#FFF',
+      fontSize: 16,
    }
 });
