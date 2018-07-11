@@ -11,9 +11,9 @@ import {
    StatusBar,
    Button
 } from 'react-native';
-const image_bg = require('../../../assets/img/bg.jpg')
-
-const IP = '10.86.32.65';
+import { setAuthState } from '../../storage/Auth';
+const image_bg = require('../../../assets/img/bg.jpg');
+import { API_URL } from '../../config/constants';
 
 export default class SignIn extends Component {
    state = {
@@ -31,7 +31,7 @@ export default class SignIn extends Component {
       });
       const { username, password } = this.state;
       try {
-         const response = await fetch(`http://${IP}/bcms/api/login`, {
+         const response = await fetch(`${API_URL}/login`, {
             method: 'POST',
             headers: {
                'Accept': 'application/json',
@@ -46,7 +46,8 @@ export default class SignIn extends Component {
 
          if (responseJson.status === 1) {
             const { token, payload } = responseJson;
-            this.props.navigation.navigate('Authorized', { token, user: payload })
+            setAuthState({ token, info: payload });
+            this.props.navigation.navigate('Authorized')
          } else {
             this.setState({
                isLoading: false,
@@ -82,7 +83,9 @@ export default class SignIn extends Component {
          >
             <StatusBar barStyle="light-content" />
             <Text style={styles.welcome}>JWT</Text>
-            <Text style={styles.error}>{this.state.error}</Text>
+            <View style={styles.errorContainer}>
+               <Text style={styles.error}>{this.state.error}</Text>
+            </View>
             <View style={styles.form}>
                <TextInput
                   autoCapitalize="none"
@@ -138,12 +141,18 @@ const styles = StyleSheet.create({
       justifyContent: 'center'
    },
    welcome: {
-      fontSize: 20,
+      fontSize: 40,
       textAlign: 'center',
       color: '#D32F2F',
       margin: 10,
    },
+   errorContainer: {
+      height: 30,
+      justifyContent: 'center',
+      alignItems: 'center'
+   },
    error: {
+
       fontSize: 16,
       color: '#D32F2F'
    },
@@ -161,7 +170,7 @@ const styles = StyleSheet.create({
       borderColor: '#D32F2F',
       borderWidth: 1,
       borderRadius: 5,
-      backgroundColor: '#CFD8DC',
+      backgroundColor: '#FFF',
       color: '#D32F2F'
    },
    button: {
